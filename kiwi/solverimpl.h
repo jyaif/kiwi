@@ -86,8 +86,10 @@ public:
 	*/
 	void addConstraint( const Constraint& constraint )
 	{
+    #ifdef __cpp_exceptions
 		if( m_cns.find( constraint ) != m_cns.end() )
 			throw DuplicateConstraint( constraint );
+    #endif
 
 		// Creating a row causes symbols to reserved for the variables
 		// in the constraint. If this method exits with an exception,
@@ -107,9 +109,11 @@ public:
 		// then it represents an unsatisfiable constraint.
 		if( subject.type() == Symbol::Invalid && allDummies( *rowptr ) )
 		{
+      #ifdef __cpp_exceptions
 			if( !nearZero( rowptr->constant() ) )
 				throw UnsatisfiableConstraint( constraint );
 			else
+      #endif
 				subject = tag.marker;
 		}
 
@@ -118,8 +122,10 @@ public:
 		// the row represents an unsatisfiable constraint.
 		if( subject.type() == Symbol::Invalid )
 		{
+      #ifdef __cpp_exceptions
 			if( !addWithArtificialVariable( *rowptr ) )
 				throw UnsatisfiableConstraint( constraint );
+      #endif
 		}
 		else
 		{
@@ -147,9 +153,10 @@ public:
 	void removeConstraint( const Constraint& constraint )
 	{
 		CnMap::iterator cn_it = m_cns.find( constraint );
+    #ifdef __cpp_exceptions
 		if( cn_it == m_cns.end() )
 			throw UnknownConstraint( constraint );
-
+    #endif
 		Tag tag( cn_it->second );
 		m_cns.erase( cn_it );
 
@@ -169,8 +176,10 @@ public:
 		else
 		{
 			row_it = getMarkerLeavingRow( tag.marker );
+      #ifdef __cpp_exceptions
 			if( row_it == m_rows.end() )
 				throw InternalSolverError( "failed to find leaving row" );
+      #endif
 			Symbol leaving( row_it->first );
 			std::unique_ptr<Row> rowptr( row_it->second );
 			m_rows.erase( row_it );
@@ -208,11 +217,16 @@ public:
 	*/
 	void addEditVariable( const Variable& variable, double strength )
 	{
+
+    #ifdef __cpp_exceptions
 		if( m_edits.find( variable ) != m_edits.end() )
 			throw DuplicateEditVariable( variable );
+    #endif
 		strength = strength::clip( strength );
+    #ifdef __cpp_exceptions
 		if( strength == strength::required )
 			throw BadRequiredStrength();
+    #endif
 		Constraint cn( Expression( variable ), OP_EQ, strength );
 		addConstraint( cn );
 		EditInfo info;
@@ -233,8 +247,10 @@ public:
 	void removeEditVariable( const Variable& variable )
 	{
 		EditMap::iterator it = m_edits.find( variable );
+    #ifdef __cpp_exceptions
 		if( it == m_edits.end() )
 			throw UnknownEditVariable( variable );
+    #endif
 		removeConstraint( it->second.constraint );
 		m_edits.erase( it );
 	}
@@ -261,8 +277,10 @@ public:
 	void suggestValue( const Variable& variable, double value )
 	{
 		EditMap::iterator it = m_edits.find( variable );
+    #ifdef __cpp_exceptions
 		if( it == m_edits.end() )
 			throw UnknownEditVariable( variable );
+    #endif
 
 		DualOptimizeGuard guard( *this );
 		EditInfo& info = it->second;
@@ -585,8 +603,10 @@ private:
 			if( entering.type() == Symbol::Invalid )
 				return;
 			RowMap::iterator it = getLeavingRow( entering );
+      #ifdef __cpp_exceptions
 			if( it == m_rows.end() )
 				throw InternalSolverError( "The objective is unbounded." );
+      #endif
 			// pivot the entering symbol into the basis
 			Symbol leaving( it->first );
 			Row* row = it->second;
@@ -621,8 +641,10 @@ private:
 			if( it != m_rows.end() && it->second->constant() < 0.0 )
 			{
 				Symbol entering( getDualEnteringSymbol( *it->second ) );
+        #ifdef __cpp_exceptions
 				if( entering.type() == Symbol::Invalid )
 					throw InternalSolverError( "Dual optimize failed." );
+        #endif
 				// pivot the entering symbol into the basis
 				Row* row = it->second;
 				m_rows.erase( it );
