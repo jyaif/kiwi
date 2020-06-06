@@ -136,8 +136,6 @@ public:
 			case Symbol::Dummy:
 				std::cout << "d";
 				break;
-			default:
-				break;
 		}
 		std::cout << symbol.id();
 	}
@@ -163,8 +161,6 @@ public:
 				break;
 			case OP_EQ:
 				std::cout << " == 0 ";
-				break;
-			default:
 				break;
 		}
 		std::cout << " | strength = " << cn.strength() << std::endl;
