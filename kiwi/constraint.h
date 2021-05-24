@@ -26,7 +26,7 @@ class Constraint
 
 public:
 
-	Constraint() : m_data( 0 ) {}
+	Constraint() : m_data( nullptr ) {}
 
 	Constraint( const Expression& expr,
 				RelationalOperator op,

@@ -26,7 +26,7 @@ namespace kiwi
 
 class SolverDebugInformation {
  public:
-  SolverDebugInformation(size_t constraints, size_t rows, size_t vars) : numberOfConstraints_(constraints), numberOfRows_(rows), numberOfVariables_(vars) {};
+  SolverDebugInformation(size_t constraints, size_t rows, size_t vars) : numberOfConstraints_(constraints), numberOfRows_(rows), numberOfVariables_(vars) {}
   size_t numberOfConstraints_;
   size_t numberOfRows_;
   size_t numberOfVariables_;
