@@ -138,11 +138,10 @@ namespace Loki
             std::sort(begin(), end(), me);
         }
 
-        AssocVector& operator=(const AssocVector& rhs)
-        {
-            AssocVector(rhs).swap(*this);
-            return *this;
-        }
+        // Commented out to fix -Wdeprecated-copy error.
+        // AssocVector(const AssocVector& rhs) {
+        //     AssocVector(rhs).swap(*this);
+        // }
 
         // iterators:
         // The following are here because MWCW gets 'using' wrong
